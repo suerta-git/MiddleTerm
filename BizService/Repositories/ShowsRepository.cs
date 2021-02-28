@@ -31,5 +31,16 @@ namespace BizService.Repositories
         {
             return _context.ScanAsync<Show>(new List<ScanCondition>()).GetRemainingAsync();
         }
+
+        public async Task<bool> IsExistAsync(string id)
+        {
+            var show = await _context.LoadAsync<Show>(id);
+            return show != null;
+        }
+
+        public Task UpdateShowAsync(Show show)
+        {
+            return _context.SaveAsync<Show>(show);
+        }
     }
 }

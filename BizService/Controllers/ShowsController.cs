@@ -17,7 +17,7 @@ namespace BizService.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetShowAsync(string id)
+        public async Task<IActionResult> GetShowAsync([FromRoute] string id)
         {
             var show = await _showsRepository.GetShowAsync(id);
             if (show == null)
@@ -34,10 +34,23 @@ namespace BizService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddShowAsync([FromBody] [Bind("Name", "Type", "Performers")] Show show)
-        {   
+        public async Task<IActionResult> AddShowAsync([FromBody][Bind("Name", "Type", "Performers")] Show show)
+        {
             await _showsRepository.AddShowAsync(show);
             return CreatedAtAction("GetShow", new { id = show.Id }, show);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateShowAsync([FromRoute] string id,
+                                                         [FromBody][Bind("Name", "Type", "Performers")] Show show)
+        {
+            if (!await _showsRepository.IsExistAsync(id))
+            {
+                return NotFound();
+            }
+            show.Id = id;
+            await _showsRepository.UpdateShowAsync(show);
+            return NoContent();
         }
     }
 }

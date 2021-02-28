@@ -9,5 +9,7 @@ namespace BizService.Repositories
         Task<Show> GetShowAsync(string id);
         Task<List<Show>> GetShowsAsync();
         Task AddShowAsync(Show show);
+        Task UpdateShowAsync(Show show);
+        Task<bool> IsExistAsync(string id);
     }
 }
