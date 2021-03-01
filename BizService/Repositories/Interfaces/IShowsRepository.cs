@@ -11,5 +11,6 @@ namespace BizService.Repositories
         Task AddShowAsync(Show show);
         Task UpdateShowAsync(Show show);
         Task<bool> IsExistAsync(string id);
+        Task DeleteShowAsync(string id);
     }
 }

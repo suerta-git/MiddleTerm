@@ -22,6 +22,11 @@ namespace BizService.Repositories
             return _context.SaveAsync<Show>(show);
         }
 
+        public Task DeleteShowAsync(string id)
+        {
+            return _context.DeleteAsync<Show>(id);
+        }
+
         public Task<Show> GetShowAsync(string id)
         {
             return _context.LoadAsync<Show>(id);

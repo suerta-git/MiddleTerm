@@ -52,5 +52,16 @@ namespace BizService.Controllers
             await _showsRepository.UpdateShowAsync(show);
             return NoContent();
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteShowAsync([FromRoute] string id)
+        {
+            if (!await _showsRepository.IsExistAsync(id))
+            {
+                return NotFound();
+            }
+            await _showsRepository.DeleteShowAsync(id);
+            return NoContent();
+        }
     }
 }
