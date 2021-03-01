@@ -26,8 +26,13 @@ namespace BizService
             services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
             services.AddAWSService<IAmazonDynamoDB>();
             services.AddHostedService<DbStartupHostedService>();
-            services.AddScoped<IDynamoDBContext, DynamoDBContext>();
+            services.AddScoped<IDynamoDBContext, DynamoDBContext>(serviceProvider => 
+            {
+                var client = serviceProvider.GetService<IAmazonDynamoDB>();
+                return new DynamoDBContext(client, new DynamoDBContextConfig { Conversion = DynamoDBEntryConversion.V2 });
+            });
             services.AddScoped<IShowsRepository, ShowsRepository>();
+            services.AddScoped<IUsersRepository, UsersRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

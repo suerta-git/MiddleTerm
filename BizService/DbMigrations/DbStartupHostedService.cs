@@ -24,24 +24,27 @@ namespace BizService.DbMigrations
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             var client = _serviceProvider.GetRequiredService<IAmazonDynamoDB>();
-            await createTableIfNotExistsAsync(client);
+            var tasks = new List<Task>
+            {
+                createTableIfNotExistsAsync(client, "shows", "Id"),
+                createTableIfNotExistsAsync(client, "users", "Id")
+            };
+            await Task.WhenAll(tasks);
         }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
-        private async Task createTableIfNotExistsAsync(IAmazonDynamoDB client)
+        private async Task createTableIfNotExistsAsync(IAmazonDynamoDB client, string tableName, string hashKeyName)
         {
-            const string TABLE_NAME = "shows";
-            const string HASH_KEY_NAME = "Id";
-            _logger.LogInformation($"Checking table '{TABLE_NAME}' existence...");
+            _logger.LogInformation($"Checking table '{tableName}' existence...");
             var tables = await client.ListTablesAsync();
-            if (!tables.TableNames.Contains(TABLE_NAME))
+            if (!tables.TableNames.Contains(tableName))
             {
-                _logger.LogInformation($"Table '{TABLE_NAME}' does not exist");
-                _logger.LogInformation($"Creating table '{TABLE_NAME}'...");
+                _logger.LogInformation($"Table '{tableName}' does not exist");
+                _logger.LogInformation($"Creating table '{tableName}'...");
                 await client.CreateTableAsync(new CreateTableRequest
                     {
-                        TableName = TABLE_NAME,
+                        TableName = tableName,
                         ProvisionedThroughput = new ProvisionedThroughput
                         {
                             ReadCapacityUnits = 3,
@@ -51,7 +54,7 @@ namespace BizService.DbMigrations
                         {
                             new KeySchemaElement
                             {
-                                AttributeName = HASH_KEY_NAME,
+                                AttributeName = hashKeyName,
                                 KeyType = KeyType.HASH
                             }
                         },
@@ -59,24 +62,24 @@ namespace BizService.DbMigrations
                         {
                             new AttributeDefinition
                             { 
-                                AttributeName = HASH_KEY_NAME,
+                                AttributeName = hashKeyName,
                                 AttributeType=ScalarAttributeType.S
                             }
                         }
                     });
 
-                _logger.LogInformation($"Checking if table '{TABLE_NAME}' is availabe...");
+                _logger.LogInformation($"Checking if table '{tableName}' is availabe...");
                 bool isTableAvailable = false;
                 while (!isTableAvailable) {
                     await Task.Delay(2000);
-                    var tableStatus = await client.DescribeTableAsync(TABLE_NAME);
+                    var tableStatus = await client.DescribeTableAsync(tableName);
                     isTableAvailable = tableStatus.Table.TableStatus == "ACTIVE";
                 }
-                _logger.LogInformation($"Table '{TABLE_NAME}' is availabe...");
+                _logger.LogInformation($"Table '{tableName}' is availabe...");
             }
             else
             {
-                _logger.LogInformation($"Table '{TABLE_NAME}' exists");
+                _logger.LogInformation($"Table '{tableName}' exists");
             }
         }
     }
