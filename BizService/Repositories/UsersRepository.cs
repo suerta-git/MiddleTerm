@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2.DataModel;
 using BizService.Models;
@@ -16,6 +17,11 @@ namespace BizService.Repositories
         public Task<User> GetUserAsync(string id)
         {
             return _context.LoadAsync<User>(id);
+        }
+
+        public Task<List<User>> GetUsersAsync()
+        {
+            return _context.ScanAsync<User>(new List<ScanCondition>()).GetRemainingAsync();
         }
 
         public async Task<bool> IsExistAsync(string id)
