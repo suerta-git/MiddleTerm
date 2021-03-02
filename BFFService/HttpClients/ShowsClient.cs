@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using BFFService.Models;
 
@@ -24,6 +26,14 @@ namespace BFFService.HttpClients
         public Task<HttpResponseMessage> GetShowAsync(string id)
         {
             return _client.GetAsync(id);
+        }
+
+        public Task<HttpResponseMessage> AddShowAsync(Show show)
+        {
+            return _client.PostAsync(
+                "", 
+                new StringContent(JsonSerializer.Serialize(show), Encoding.UTF8, "application/json")
+            );
         }
     }
 }

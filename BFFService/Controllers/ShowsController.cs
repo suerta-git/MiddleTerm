@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using BFFService.HttpClients;
+using BFFService.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +32,14 @@ namespace BFFService.Controllers
         public async Task<Stream> GetShowAsync([FromRoute] string id)
         {
             var response = await _client.GetShowAsync(id);
+            copyStatusAndHeaders(response, Response);
+            return await response.Content.ReadAsStreamAsync();
+        }
+
+        [HttpPost]
+        public async Task<Stream> AddShowAsync([FromBody][Bind("Name", "Type", "Performers")] Show show)
+        {
+            var response = await _client.AddShowAsync(show);
             copyStatusAndHeaders(response, Response);
             return await response.Content.ReadAsStreamAsync();
         }
