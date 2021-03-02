@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -134,6 +135,37 @@ namespace BizService.Controllers
                 return NotFound();
             }
             return Content(voteResult.ToJson(), "application/json");
+        }
+
+        [HttpPost("Draw")]
+        public async Task<IActionResult> DrawPrizes(
+            [Range(1, int.MaxValue)]
+            [Required]
+            int totalPrizes,
+            [Range(1, int.MaxValue)]
+            [Required]
+            int fromTopN)
+        {
+            var table = _context.GetTargetTable<User>();
+            var voteResult = await table.GetItemAsync("VoteResult");
+            if (voteResult == null)
+            {
+                return NotFound();
+            }
+
+            var phoneNumbers = voteResult["Result"].AsListOfDocument()
+                .Take(fromTopN)
+                .SelectMany(show => show["votes"].AsListOfString())
+                .ToList();
+
+            var prizes = new List<string>();
+            while (prizes.Count < totalPrizes && phoneNumbers.Count > 0)
+            {
+                var index = new Random().Next(phoneNumbers.Count);
+                prizes.Add(phoneNumbers[index]);
+                phoneNumbers.RemoveAt(index);
+            }
+            return Ok(prizes);
         }
     }
 }
