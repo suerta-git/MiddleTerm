@@ -44,6 +44,15 @@ namespace BFFService.Controllers
             return await response.Content.ReadAsStreamAsync();
         }
 
+        [HttpPut("{id}")]
+        public async Task<Stream> UpdateShowAsync([FromRoute] string id,
+                                                  [FromBody][Bind("Name", "Type", "Performers")] Show show)
+        {
+            var response = await _client.UpdateShowAsync(id, show);
+            copyStatusAndHeaders(response, Response);
+            return await response.Content.ReadAsStreamAsync();
+        }
+
         private void copyStatusAndHeaders(HttpResponseMessage response, HttpResponse finalResponse)
         {
             finalResponse.StatusCode = (int)response.StatusCode;

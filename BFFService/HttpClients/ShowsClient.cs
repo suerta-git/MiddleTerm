@@ -35,5 +35,13 @@ namespace BFFService.HttpClients
                 new StringContent(JsonSerializer.Serialize(show), Encoding.UTF8, "application/json")
             );
         }
+        
+        public Task<HttpResponseMessage> UpdateShowAsync(string id, Show show)
+        {
+            return _client.PostAsync(
+                id, 
+                new StringContent(JsonSerializer.Serialize(show), Encoding.UTF8, "application/json")
+            );
+        }
     }
 }
