@@ -138,7 +138,7 @@ namespace BizService.Controllers
         }
 
         [HttpPost("Draw")]
-        public async Task<IActionResult> DrawPrizes(
+        public async Task<IActionResult> DrawPrizesAsync(
             [Range(1, int.MaxValue)]
             [Required]
             int totalPrizes,
