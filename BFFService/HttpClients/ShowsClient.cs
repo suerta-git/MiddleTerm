@@ -12,13 +12,18 @@ namespace BFFService.HttpClients
 
         public ShowsClient(HttpClient httpClient)
         {
-            httpClient.BaseAddress = new Uri("https://localhost:5001/shows");
+            httpClient.BaseAddress = new Uri("https://localhost:5001/shows/");
             _client = httpClient;
         }
 
         public Task<HttpResponseMessage> GetShowsAsync()
         {
             return _client.GetAsync(""); 
+        }
+
+        public Task<HttpResponseMessage> GetShowAsync(string id)
+        {
+            return _client.GetAsync(id);
         }
     }
 }
