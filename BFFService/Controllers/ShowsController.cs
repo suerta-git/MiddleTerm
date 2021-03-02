@@ -52,6 +52,14 @@ namespace BFFService.Controllers
             copyStatusAndHeaders(response, Response);
             return await response.Content.ReadAsStreamAsync();
         }
+        
+        [HttpDelete("{id}")]
+        public async Task<Stream> DeleteShowAsync([FromRoute] string id)
+        {
+            var response = await _client.DeleteShowAsync(id);
+            copyStatusAndHeaders(response, Response);
+            return await response.Content.ReadAsStreamAsync();
+        }
 
         private void copyStatusAndHeaders(HttpResponseMessage response, HttpResponse finalResponse)
         {

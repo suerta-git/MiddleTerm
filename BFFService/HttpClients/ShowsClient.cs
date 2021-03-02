@@ -38,10 +38,15 @@ namespace BFFService.HttpClients
         
         public Task<HttpResponseMessage> UpdateShowAsync(string id, Show show)
         {
-            return _client.PostAsync(
+            return _client.PutAsync(
                 id, 
                 new StringContent(JsonSerializer.Serialize(show), Encoding.UTF8, "application/json")
             );
+        }
+        
+        public Task<HttpResponseMessage> DeleteShowAsync(string id)
+        {
+            return _client.DeleteAsync(id);
         }
     }
 }
