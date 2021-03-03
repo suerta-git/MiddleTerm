@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using BFFService.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace BFFService.HttpClients
 {
@@ -11,9 +12,10 @@ namespace BFFService.HttpClients
     {
         private readonly HttpClient _client;
 
-        public VotesClient(HttpClient httpClient)
+        public VotesClient(HttpClient httpClient, IConfiguration config)
         {
-            httpClient.BaseAddress = new Uri("https://localhost:5001/votes/");
+            var bizServiceUrl = config.GetValue<string>("BizServiceUrl");
+            httpClient.BaseAddress = new Uri($"{bizServiceUrl}/votes/");
             _client = httpClient;
         }
 
