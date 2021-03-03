@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+  web:
+    depends_on:
+      - biz-service
+    image: web
+    build: ./BFFService
+    container_name: web
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+  biz-service:
+    depends_on: 
+      - dynamodb-local
+    image: biz-service
+    build: ./BizService
+    container_name: biz-service
+    expose:
+      - "5000"
+    environment:
+      - AWS_ACCESS_KEY_ID='DUMMYIDEXAMPLE'
+      - AWS_SECRET_ACCESS_KEY='DUMMYEXAMPLEKEY'
+      - REGION='eu-west-1'
